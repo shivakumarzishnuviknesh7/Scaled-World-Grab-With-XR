@@ -1,0 +1,58 @@
+[gd_scene load_steps=8 format=3 uid="uid://d1cv0xc454183"]
+
+[ext_resource type="Script" path="res://XRbootstrap.gd" id="1_sjnom"]
+[ext_resource type="Script" path="res://RayPick.gd" id="2_pqbvr"]
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_gluso"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_uvokm"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_w7lrv"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hkppn"]
+size = Vector3(20, 0.2, 20)
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_11s25"]
+
+[node name="Root" type="Node3D"]
+
+[node name="XROrigin3D" type="XROrigin3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 1)
+script = ExtResource("1_sjnom")
+
+[node name="Camera" type="XRCamera3D" parent="XROrigin3D"]
+
+[node name="XRController" type="XRController3D" parent="XROrigin3D" node_paths=PackedStringArray("holder_node", "raycast")]
+tracker = &"right_hand"
+script = ExtResource("2_pqbvr")
+holder_node = NodePath("../../Cube")
+raycast = NodePath("RayCast")
+
+[node name="RayCast" type="RayCast3D" parent="XROrigin3D/XRController"]
+
+[node name="MeshInstance" type="MeshInstance3D" parent="XROrigin3D/XRController"]
+mesh = SubResource("CapsuleMesh_gluso")
+
+[node name="Cube" type="RigidBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0.659416, -2)
+
+[node name="CollisionShape" type="CollisionShape3D" parent="Cube"]
+shape = SubResource("BoxShape3D_uvokm")
+
+[node name="MeshInstance" type="MeshInstance3D" parent="Cube"]
+mesh = SubResource("BoxMesh_w7lrv")
+
+[node name="Floor" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape" type="CollisionShape3D" parent="Floor"]
+shape = SubResource("BoxShape3D_hkppn")
+
+[node name="MeshInstance" type="MeshInstance3D" parent="Floor"]
+transform = Transform3D(10, 0, 0, 0, 10, 0, 0, 0, 10, 0, 0, 0)
+mesh = SubResource("PlaneMesh_11s25")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1, 1, 4)
+
+[connection signal="button_pressed" from="XROrigin3D/XRController" to="XROrigin3D/XRController" method="_on_controller_right_button_pressed"]
+[connection signal="button_released" from="XROrigin3D/XRController" to="XROrigin3D/XRController" method="_on_controller_right_button_released"]
